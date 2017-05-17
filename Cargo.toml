@@ -5,6 +5,7 @@ authors = ["Joshua Stone <joshua.gage.stone@gmail.com>"]
 
 [dependencies]
 rand = "*"
+clap = "*"
 
 [profile.release]
 lto = true

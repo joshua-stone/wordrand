@@ -2,11 +2,22 @@ use std::path::Path;
 use std::fs::File;
 use std::io::{BufReader, BufRead};
 
+extern crate clap;
+use clap::{App};
+
 extern crate rand;
 use rand::{thread_rng, sample};
 
 fn main() {
-    let word_count = 3;
+    let args = App::new("wordrand")
+                        .version("0.1")
+                        .about("Random word generator")
+                        .args_from_usage(
+                            "-n, --number=[NUMBER] 'Number of words per line'"
+                        )
+                        .get_matches();
+
+    let word_count: usize = args.value_of("lines").unwrap_or("3").parse().unwrap();
 
     let dict = Path::new("/usr/share/dict/words");
 
