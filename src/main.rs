@@ -13,11 +13,13 @@ fn main() {
                         .version("0.1")
                         .about("Random word generator")
                         .args_from_usage(
-                            "-n, --number=[NUMBER] 'Number of words per line'"
+                            "-n, --number=[NUMBER] 'Number of words per line'
+                             -s, --separator=[SEPARATOR] 'Character(s) separating words'"
                         )
                         .get_matches();
 
-    let word_count: usize = args.value_of("lines").unwrap_or("3").parse().unwrap();
+    let word_count: usize = args.value_of("number").unwrap_or("3").parse().unwrap();
+    let separator: &str = args.value_of("separator").unwrap_or(".");
 
     let dict = Path::new("/usr/share/dict/words");
 
@@ -32,6 +34,6 @@ fn main() {
     let random_words = sample(&mut rng, words, word_count);
 
     
-    println!("{}", random_words.join("."));
+    println!("{}", random_words.join(separator));
 
 }
