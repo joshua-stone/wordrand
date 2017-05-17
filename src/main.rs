@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::path::Path;
 use std::fs::File;
 use std::io::{BufReader, BufRead};
@@ -6,7 +7,7 @@ extern crate clap;
 use clap::{App};
 
 extern crate rand;
-use rand::{thread_rng, sample};
+use rand::{Rng, thread_rng};
 
 fn main() {
     let args = App::new("wordrand")
@@ -19,7 +20,7 @@ fn main() {
                         )
                         .get_matches();
 
-    let lines = args.value_of("lines").unwrap_or(" ").parse().unwrap();
+    let lines = args.value_of("lines").unwrap_or("1").parse().unwrap();
     let word_count: usize = args.value_of("number").unwrap_or("3").parse().unwrap();
     let separator: &str = args.value_of("separator").unwrap_or(".");
 
@@ -34,8 +35,13 @@ fn main() {
 
     let mut rng = thread_rng();
 
-    for _ in 0..lines { 
-        let random_words = sample(&mut rng, words.iter().map(|s| s.as_ref()), word_count);
+    let mut indices = HashSet::with_capacity(word_count);
+    for _ in 0..lines {
+        while indices.len() < word_count {
+            indices.insert(rng.gen_range(0, words.len()));
+        }
+        let random_words: Vec<_> = indices.iter().map(|i| words[*i].as_str()).collect();
         println!("{}", random_words.join(separator));
+        indices.clear();
     }
-}
+} 
