@@ -13,11 +13,13 @@ fn main() {
                         .version("0.1")
                         .about("Random word generator")
                         .args_from_usage(
-                            "-n, --number=[NUMBER] 'Number of words per line'
+                            "-l, --lines=[LINES] 'Number of word combinations to produce'
+                             -n, --number=[NUMBER] 'Number of words per line'
                              -s, --separator=[SEPARATOR] 'Character(s) separating words'"
                         )
                         .get_matches();
 
+    let lines = args.value_of("lines").unwrap_or(" ").parse().unwrap();
     let word_count: usize = args.value_of("number").unwrap_or("3").parse().unwrap();
     let separator: &str = args.value_of("separator").unwrap_or(".");
 
@@ -31,9 +33,9 @@ fn main() {
     let words: Vec<String> = BufReader::new(file).lines().map(|x| x.unwrap()).collect();
 
     let mut rng = thread_rng();
-    let random_words = sample(&mut rng, words, word_count);
 
-    
-    println!("{}", random_words.join(separator));
-
+    for _ in 0..lines { 
+        let random_words = sample(&mut rng, words.iter().map(|s| s.as_ref()), word_count);
+        println!("{}", random_words.join(separator));
+    }
 }
