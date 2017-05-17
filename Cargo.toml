@@ -1,0 +1,10 @@
+[package]
+name = "wordrand"
+version = "0.1.0"
+authors = ["Joshua Stone <joshua.gage.stone@gmail.com>"]
+
+[dependencies]
+rand = "*"
+
+[profile.release]
+lto = true
