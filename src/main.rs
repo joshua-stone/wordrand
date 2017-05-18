@@ -7,7 +7,7 @@ extern crate clap;
 use clap::App;
 
 extern crate rand;
-use rand::{Rng, thread_rng};
+use rand::{Rng, ThreadRng, thread_rng};
 
 fn main() {
     let args = App::new("wordrand")
@@ -31,8 +31,8 @@ fn main() {
         Err(message) => panic!("Couldn't open dictionary file: {}: {}", dict.display(), message)
     };
 
-    let mut rng = thread_rng();
-    let mut indices = HashSet::with_capacity(word_count);
+    let mut rng: ThreadRng = thread_rng();
+    let mut indices: HashSet<usize> = HashSet::with_capacity(word_count);
 
     for _ in 0..lines {
         while indices.len() < word_count {
