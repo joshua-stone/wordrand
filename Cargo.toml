@@ -2,6 +2,12 @@
 name = "wordrand"
 version = "0.1.0"
 authors = ["Joshua Stone <joshua.gage.stone@gmail.com>"]
+description = "Random word generator"
+repositoy = "https://github.com/joshua-stone/wordrand"
+readme = "README.md"
+license = "MIT"
+keywords = ["cli", "random word generator"]
+categories = ["command-line-interface", "command-line-utilities", "os::unix-apis"]
 
 [dependencies]
 rand = "*"
