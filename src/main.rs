@@ -4,21 +4,21 @@ use std::fs::File;
 use std::io::{BufReader, BufRead};
 
 extern crate clap;
-use clap::App;
+use clap::{App, ArgMatches};
 
 extern crate rand;
 use rand::{Rng, ThreadRng, thread_rng};
 
 fn main() {
-    let args = App::new("wordrand")
-                        .version("0.1")
-                        .about("Random word generator")
-                        .args_from_usage(
-                            "-l, --lines=[LINES] 'Number of word combinations to produce'
-                             -n, --number=[NUMBER] 'Number of words per line'
-                             -s, --separator=[SEPARATOR] 'Character(s) separating words'"
-                        )
-                        .get_matches();
+    let args: ArgMatches = App::new("wordrand")
+                                    .version("0.1")
+                                    .about("Random word generator")
+                                    .args_from_usage(
+                                    "-l, --lines=[LINES] 'Number of word combinations to produce'
+                                     -n, --number=[NUMBER] 'Number of words per line'
+                                      -s, --separator=[SEPARATOR] 'Character(s) separating words'"
+                                    )
+                                    .get_matches();
 
     let lines: usize = args.value_of("lines").unwrap_or("1").parse().unwrap();
     let word_count: usize = args.value_of("number").unwrap_or("3").parse().unwrap();
