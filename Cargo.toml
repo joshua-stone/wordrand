@@ -1,17 +1,18 @@
 [package]
 name = "wordrand"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Joshua Stone <joshua.gage.stone@gmail.com>"]
 description = "Random word generator"
-repositoy = "https://github.com/joshua-stone/wordrand"
+repository = "https://github.com/joshua-stone/wordrand"
 readme = "README.md"
 license = "MIT"
 keywords = ["cli", "random word generator"]
 categories = ["command-line-interface", "command-line-utilities", "os::unix-apis"]
+edition = "2024"
 
 [dependencies]
-rand = "*"
-clap = "*"
+clap = { version = "4.6.6", features = ["derive"] }
+rand = { version = "0.10.2", features = ["thread_rng"] }
 
 [profile.release]
 lto = true

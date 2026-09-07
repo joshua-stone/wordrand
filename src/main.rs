@@ -1,45 +1,52 @@
+use clap::Parser;
+
+use rand::prelude::IndexedRandom;
+use rand::rng;
+
 use std::collections::HashSet;
-use std::path::Path;
-use std::fs::File;
-use std::io::{BufReader, BufRead};
+use std::fs::read_to_string;
+use std::path::PathBuf;
 
-extern crate clap;
-use clap::{App, ArgMatches};
+fn read_dictionary_file(filename: &PathBuf) -> Vec<String> {
+    read_to_string(filename)
+        .unwrap()
+        .to_lowercase()
+        .lines()
+        .map(String::from)
+        .collect::<HashSet<String>>()
+        .into_iter()
+        .collect::<Vec<String>>()
+}
 
-extern crate rand;
-use rand::{Rng, ThreadRng, thread_rng};
+/// Random word generator
+#[derive(Parser)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Number of word combinations to produce
+    #[arg(short, long, default_value_t = 1)]
+    lines: usize,
+    /// Number of words per line
+    #[arg(short, long, default_value_t = 3)]
+    number: usize,
+    /// Character(s) separating words
+    #[arg(short, long, default_value = ".")]
+    separator: String,
+    /// Path to dictionary file
+    #[arg(short, long, default_value = "/usr/share/dict/words")]
+    dictionary: PathBuf,
+}
 
 fn main() {
-    let args: ArgMatches = App::new("wordrand")
-                                    .version("0.1")
-                                    .about("Random word generator")
-                                    .args_from_usage(
-                                    "-l, --lines=[LINES] 'Number of word combinations to produce'
-                                     -n, --number=[NUMBER] 'Number of words per line'
-                                      -s, --separator=[SEPARATOR] 'Character(s) separating words'"
-                                    )
-                                    .get_matches();
+    let args = Args::parse();
 
-    let lines: usize = args.value_of("lines").unwrap_or("1").parse().unwrap();
-    let word_count: usize = args.value_of("number").unwrap_or("3").parse().unwrap();
-    let separator: &str = args.value_of("separator").unwrap_or(".");
+    let dictionary = read_dictionary_file(&args.dictionary);
 
-    let dict = Path::new("/usr/share/dict/words");
+    for _ in 0..args.lines {
+        let random_words = dictionary
+            .sample(&mut rng(), args.number)
+            .map(String::as_str)
+            .collect::<Vec<&str>>();
 
-    let words: Vec<String> = match File::open(&dict) {
-        Ok(f) => BufReader::new(f).lines().map(|x| x.unwrap()).collect(),
-        Err(message) => panic!("Couldn't open dictionary file: {}: {}", dict.display(), message)
-    };
-
-    let mut rng: ThreadRng = thread_rng();
-    let mut indices: HashSet<usize> = HashSet::with_capacity(word_count);
-
-    for _ in 0..lines {
-        while indices.len() < word_count {
-            indices.insert(rng.gen_range(0, words.len()));
-        }
-        let random_words: Vec<&str> = indices.iter().map(|i| words[*i].as_str()).collect();
-        println!("{}", random_words.join(separator));
-        indices.clear();
+        println!("{}", random_words.join(&args.separator));
     }
-} 
+}
